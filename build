@@ -1,0 +1,21 @@
+#!/usr/bin/env sh
+
+set -e
+
+cd jsmn
+make
+cd ..
+
+case $1 in
+    test)
+	swift test -Xlinker -Ljsmn
+    ;;
+    
+    "")
+	swift build -Xlinker -Ljsmn
+    ;;
+
+    *)
+	echo "unrecognized option $1"
+    ;; 
+esac
