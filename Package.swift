@@ -3,5 +3,8 @@
 import PackageDescription
 
 let package = Package(
-    name: "json"
+  name: "json",
+  dependencies: [
+    .Package(url: "https://github.com/mammothbane/jsmn", majorVersion: 0)
+  ]
 )

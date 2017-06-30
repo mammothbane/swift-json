@@ -1,0 +1,12 @@
+{
+  "autoPin": true,
+  "pins": [
+    {
+      "package": "jsmn",
+      "reason": null,
+      "repositoryURL": "https://github.com/mammothbane/jsmn",
+      "version": "0.0.1"
+    }
+  ],
+  "version": 1
+}
