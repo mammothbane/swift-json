@@ -1,9 +1,5 @@
 import Foundation
 
-//public func parseJson<T: JValue>(s: Data) -> T {
-//    return nil
-//}
-
 public class JValue:
   Equatable {
     fileprivate init() {}
