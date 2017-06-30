@@ -1,52 +1,72 @@
 import Foundation
 
-public func parseJson<T: JValue>(s: Data) -> T {
-    
-}
+//public func parseJson<T: JValue>(s: Data) -> T {
+//    return nil
+//}
 
-public protocol JValue: Equatable {
-    func toJsonString() -> String
-}
+public class JValue:
+  Equatable {
+    fileprivate init() {}
+    public func toJsonString() -> String {return ""}
 
-public extension JValue {
     public func toJson(with encoding: String.Encoding = .utf8) -> Data? {
         return self.toJsonString().data(using: encoding)
     }
 }
 
-public struct JArray:
+public class JArray:
   JValue {
     var elems: [JValue]
-
-    public func toJsonString() -> String {
+    
+    public override func toJsonString() -> String {
         return "[" + elems.map { $0.toJsonString() }.joined(separator: ",") + "]"
+    }
+
+    public override init() {
+        elems = []
+        super.init()
+    }
+    
+    public init(elems: JValue...) {
+        self.elems = elems
+        super.init()
     }
 }
 
-public struct JObject:
+public class JObject:
   JValue {
     var elems: [JString:JValue]
 
-    public func toJsonString() -> String {
+    public override func toJsonString() -> String {
         return "{" + elems.map { "\($0.toJsonString()): \($1.toJsonString())" }.joined(separator: ",\n") + "}"
+    }
+
+    public override init() { 
+       elems = [:]
+       super.init()
+    }
+
+    public init(elems: [JString:JValue]) {
+        self.elems = elems
+        super.init()
     }
 }
 
-public struct JString:
+public class JString:
   JValue,
   ExpressibleByStringLiteral,
   Hashable {
     public var value: String
 
-    public init(stringLiteral: String) {
+    required public init(stringLiteral: String) {
        	value = stringLiteral
     }
-
-    public init(extendedGraphemeClusterLiteral: String) {
+    
+    required public init(extendedGraphemeClusterLiteral: String) {
         value = extendedGraphemeClusterLiteral
     }
 
-    public init(unicodeScalarLiteral: String) {
+    required public init(unicodeScalarLiteral: String) {
         value = unicodeScalarLiteral
     }
 
@@ -54,12 +74,12 @@ public struct JString:
         return value.hashValue
     }
 
-    public func toJsonString() -> String {
+    public override func toJsonString() -> String {
         return "\"\(value)\""
     }
 }
 
-public struct JNumber:
+public class JNumber:
   JValue,
   ExpressibleByIntegerLiteral,
   ExpressibleByFloatLiteral,
@@ -67,11 +87,11 @@ public struct JNumber:
   Comparable {
     public var value: Double
 
-    public init(integerLiteral: Int) {
+    required public init(integerLiteral: Int) {
        	value = Double(integerLiteral)
     }
 
-    public init(floatLiteral: Float) {
+    required public init(floatLiteral: Float) {
 	value = Double(floatLiteral)
     }
 
@@ -79,18 +99,18 @@ public struct JNumber:
         return value.hashValue
     }
 
-    public func toJsonString() -> String {
+    public override func toJsonString() -> String {
         return "\(value)"
     }
 }
 
-public struct JBool:
+public class JBool:
   JValue,
   ExpressibleByBooleanLiteral,
   Hashable {
     public var value: Bool
 
-    public init(booleanLiteral: Bool) {
+    required public init(booleanLiteral: Bool) {
        	value = booleanLiteral
     }
 
@@ -98,22 +118,22 @@ public struct JBool:
         return value.hashValue
     }
 
-    public func toJsonString() -> String {
+    public override func toJsonString() -> String {
         return "\(value)"
     }
 }
 
-public struct JNull:
+public class JNull:
   JValue,
   ExpressibleByNilLiteral,
   Hashable {
-    public init(nilLiteral: ()) {}
+    required public init(nilLiteral: ()) {}
 
     public var hashValue: Int {
         return 0
     }
 
-    public func toJsonString() -> String {
+    public override func toJsonString() -> String {
         return "null"
     }
 }

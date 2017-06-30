@@ -1,5 +1,9 @@
 // MARK: ==
 
+public func == (lhs: JValue, rhs: JValue) -> Bool {
+    return false
+}
+
 public func == (lhs: JNumber, rhs: JNumber) -> Bool {
     return lhs.value == rhs.value
 }
