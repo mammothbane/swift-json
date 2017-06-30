@@ -9,6 +9,7 @@ class jsonTests: XCTestCase {
         ("testNullSerialize", testNullSerialize),
         ("testArraySerialize", testArraySerialize),
         ("testObjectSerialize", testObjectSerialize),
+        ("testParse", testParse),
     ]
 
     func testNumberSerialize() {
@@ -54,5 +55,11 @@ class jsonTests: XCTestCase {
                             "yo": Json.number(123)])
         //XCTAssertEqual(obj.jsonString(), "{\"sup\":null,\"werp herpderp\":\"flermpwerp\",\"this is an array\":[3123,null,false],\"hello\":{\"teib do go bobeil\":333},\"yo\":123}")
         XCTAssertEqual(Json.object([:]).jsonString(), "{}")
+    }
+
+    func testParse() {
+        let json = "{\"i'm a string\": 4e+2}"
+        let data = json.data(using: .utf8)
+        let _ = try! parseJson(data!)
     }
 }
