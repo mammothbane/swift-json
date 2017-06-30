@@ -1,47 +1,119 @@
-public func parseJson(s: Data): JValue {
+import Foundation
+
+public func parseJson<T: JValue>(s: Data) -> T {
     
 }
 
-public protocol JValue {
-    toString() -> String
+public protocol JValue: Equatable {
+    func toJsonString() -> String
 }
 
-public struct JArray: JValue {
-    var children: [JValue]
+public extension JValue {
+    public func toJson(with encoding: String.Encoding = .utf8) -> Data? {
+        return self.toJsonString().data(using: encoding)
+    }
 }
 
-public struct JObject: JValue {
+public struct JArray:
+  JValue {
+    var elems: [JValue]
+
+    public func toJsonString() -> String {
+        return "[" + elems.map { $0.toJsonString() }.joined(separator: ",") + "]"
+    }
+}
+
+public struct JObject:
+  JValue {
     var elems: [JString:JValue]
+
+    public func toJsonString() -> String {
+        return "{" + elems.map { "\($0.toJsonString()): \($1.toJsonString())" }.joined(separator: ",\n") + "}"
+    }
 }
 
-public struct JString: JValue, StringLiteralConvertible {
-    var value: String
+public struct JString:
+  JValue,
+  ExpressibleByStringLiteral,
+  Hashable {
+    public var value: String
 
-    init(stringLiteral: String) {
+    public init(stringLiteral: String) {
        	value = stringLiteral
     }
-}
 
-public struct JNumber: JValue, IntLiteralConvertible, FloatLiteralConvertible {
-    var value: Double
-
-    init(intLiteral: Int) {
-       	value = Double(intLiteral)
+    public init(extendedGraphemeClusterLiteral: String) {
+        value = extendedGraphemeClusterLiteral
     }
 
-    init(floatLiteral: Float) {
+    public init(unicodeScalarLiteral: String) {
+        value = unicodeScalarLiteral
+    }
+
+    public var hashValue: Int {
+        return value.hashValue
+    }
+
+    public func toJsonString() -> String {
+        return "\"\(value)\""
+    }
+}
+
+public struct JNumber:
+  JValue,
+  ExpressibleByIntegerLiteral,
+  ExpressibleByFloatLiteral,
+  Hashable,
+  Comparable {
+    public var value: Double
+
+    public init(integerLiteral: Int) {
+       	value = Double(integerLiteral)
+    }
+
+    public init(floatLiteral: Float) {
 	value = Double(floatLiteral)
     }
-}
 
-public struct JBool: JValue, BoolLiteralConvertible {
-    var value: Bool
+    public var hashValue: Int {
+        return value.hashValue
+    }
 
-    init(boolLiteral: Boolean) {
-       	value = boolLiteral
+    public func toJsonString() -> String {
+        return "\(value)"
     }
 }
 
-public struct JNull: JValue, NilLiteralConvertible {
-    init(nilLiteral: ()) {}
+public struct JBool:
+  JValue,
+  ExpressibleByBooleanLiteral,
+  Hashable {
+    public var value: Bool
+
+    public init(booleanLiteral: Bool) {
+       	value = booleanLiteral
+    }
+
+    public var hashValue: Int {
+        return value.hashValue
+    }
+
+    public func toJsonString() -> String {
+        return "\(value)"
+    }
+}
+
+public struct JNull:
+  JValue,
+  ExpressibleByNilLiteral,
+  Hashable {
+    public init(nilLiteral: ()) {}
+
+    public var hashValue: Int {
+        return 0
+    }
+
+    public func toJsonString() -> String {
+        return "null"
+    }
 }
